@@ -1,9 +1,9 @@
 version: "2"
 
-# services:
+services:
 #   gringotts:
 #     build:
-#       context: ./Dockerfiles
+#       context: ./Docker
 #       dockerfile: gringotts
 #     image: gringotts
 #     hostname: gringotts  
@@ -22,9 +22,9 @@ version: "2"
 #     networks:
 #       - ifc_gringo
 #     # environment:
-#     #   - POA_SIGNER_PRI_KEY=${POA_SIGNER_PRI_KEY}
-#     #   - POA_SIGNER_ADDRESS=${POA_SIGNER_ADDRESS}
-#     #   - POA_SIGNER_PWD=${POA_SIGNER_PWD}
+#     #   - POA_POA_SIGNER_PRI_KEY=${POA_POA_SIGNER_PRI_KEY}
+#     #   - POA_POA_SIGNER_ADDRESS=${POA_POA_SIGNER_ADDRESS}
+#     #   - POA_POA_SIGNER_PWD=${POA_POA_SIGNER_PWD}
 #     #   - SIDECHAIN_ADDRESS=${SIDECHAIN_ADDRESS}
 #     #   - WEB3_HOST=${WEB3_HOST}
 #     #   - WEB3_PORT=${WEB3_PORT}
@@ -34,7 +34,7 @@ version: "2"
 
 #   postgres:
 #     build:
-#       context: ./Dockerfiles
+#       context: ./Docker
 #       dockerfile: postgres
 #     image: postgres
 #     hostname: postgres  
@@ -53,7 +53,7 @@ version: "2"
 
     gethpoa:
       build:
-        context: ./Dockerfiles
+        context: ./Docker
         dockerfile: gethpoa
       image: gethpoa
       hostname: gethpoa
@@ -64,7 +64,7 @@ version: "2"
       volumes:
         - ${GETH_HOST_DATA_VOL}:/gethdata
       networks:
-        - ifc_gringo  
+        - ifc_gringo
       environment:
         - POA_SIGNER_PRI_KEY=${POA_SIGNER_PRI_KEY}
         - POA_SIGNER_ADDRESS=${POA_SIGNER_ADDRESS}
