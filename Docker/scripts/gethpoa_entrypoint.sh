@@ -1,15 +1,20 @@
 #!/bin/bash
 
+source .env.default
+
 # $POA_SIGNER_PRI_KEY is from docker-compose at container running time ,not iamge building time 
 # $POA_SIGNER_ADDRESS is from docker-compose at container running time ,not iamge building time 
 # $POA_SIGNER_PWD is from docker-compose at container running time ,not iamge building time 
 # $GETH_DATA_DIR is from Dockerfile
 # $WORK_DIR is from Dockerfile
-
-source .env.default
+[[ "$POA_SIGNER_PRI_KEY" == "" ]] && POA_SIGNER_PRI_KEY=$DEFAULT_POA_SIGNER_PRI_KEY
+[[ "$POA_SIGNER_ADDRESS" == "" ]] && POA_SIGNER_ADDRESS=$DEFAULT_POA_SIGNER_ADDRESS
+[[ "$POA_SIGNER_PWD" == "" ]] && POA_SIGNER_PWD=$DEFAULT_POA_SIGNER_PWD
+[[ "$BLOCK_GENERATING_TIME" == "" ]] && BLOCK_GENERATING_TIME=$DEFAULT_BLOCK_GENERATING_TIME
 
 POA_SIGNER_PRIKEY_FILE=$GETH_DATA_DIR/poa_signer.raw_prikey
 POA_SIGNER_PWD_FILE=$GETH_DATA_DIR/poa_signer.pwd
+
 
 # $1 is gethpoa_genesis.json
 # $2 is $POA_SIGNER_ADDRESS
@@ -34,6 +39,8 @@ function _isSignerModified {
 
     STORED_POA_SIGNER_PRIKEY=$(cat $POA_SIGNER_PRIKEY_FILE) && \
     [[ "$STORED_POA_SIGNER_PRIKEY" != "" ]] && [[ "$STORED_POA_SIGNER_PRIKEY" != "$POA_SIGNER_PRI_KEY" ]] && \
+    echo 1 && return
+    
     STORED_POA_SIGNER_PWD=$(cat $POA_SIGNER_PWD_FILE) && \
     [[ "$STORED_POA_SIGNER_PWD" != "" ]] && [[ "$STORED_POA_SIGNER_PWD" != "$POA_SIGNER_PWD" ]] && \
     echo 1 && return
@@ -42,10 +49,7 @@ function _isSignerModified {
 }
 
 function _initGeth {
-    [[ "$POA_SIGNER_PRI_KEY"=="" ]] && POA_SIGNER_PRI_KEY=$DEFAULT_POA_POA_SIGNER_PRI_KEY
-    [[ "$POA_SIGNER_ADDRESS"=="" ]] && POA_SIGNER_ADDRESS=$DEFAULT_POA_POA_SIGNER_ADDRESS
-    [[ "$POA_SIGNER_PWD"=="" ]] && POA_SIGNER_PWD=$POA_SIGNER_PWD
-    [[ "$BLOCK_GENERATING_TIME"=="" ]] && BLOCK_GENERATING_TIME=$DEFAULT_BLOCK_GENERATING_TIME
+    rm -rfv $GETH_DATA_DIR/*
 
     # Replace genesis file
     cp gethpoa_genesis.json.tpl gethpoa_genesis.json
@@ -64,11 +68,11 @@ function _initGeth {
     geth \
     --datadir $GETH_DATA_DIR \
     --password $POA_SIGNER_PWD_FILE \
-    account import $POA_SIGNER_PRIKEY_FILE #> /dev/null 2>&1
+    account import $POA_SIGNER_PRIKEY_FILE #/dev/null 2>&1
 }
 
-isModified=$(_isSignerModified)
-if [[ "$isModified"=="1" ]]; then 
+isModified=$(_isSignerModified);
+if [[ "$isModified" == "1" ]]; then 
     _initGeth
 else
     echo "geth init with the same address, pass init process."
@@ -85,16 +89,3 @@ geth \
 --etherbase "$POA_SIGNER_ADDRESS" \
 --password $POA_SIGNER_PWD_FILE \
 --mine
-
-
-
-
-
-#echo "cur:   $POA_SIGNER_ADDRESS"
-[[ "$POA_SIGNER_ADDRESS" == "" ]] && POA_SIGNER_ADDRESS=$DEFAULT_POA_SIGNER_ADDRESS
-#echo "def:   $DEFAULT_POA_SIGNER_ADDRESS"
-
-
-
-
-
