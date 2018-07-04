@@ -4,4 +4,4 @@ build/*
 node_modules/
 env.js
 .node-xmlhttprequest-sync-*
-devops/.env
+.env
