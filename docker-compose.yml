@@ -1,0 +1,75 @@
+version: "2"
+
+# services:
+#   gringotts:
+#     build:
+#       context: ./Dockerfiles
+#       dockerfile: gringotts
+#     image: gringotts
+#     hostname: gringotts  
+#     container_name: gringotts
+#     restart: always
+#     working_dir: /home/node/app
+#     volumes:
+#       - ${IFC_NODE_SRC}:/home/node/app
+#       - ${NODEJS_LOGS_HOST_VOL}:/root/.pm2/logs
+#       - ../mount_files/ifc-agent.start.sh:/home/node/app/devops/ifc-agent.start.sh
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - postgres
+#       - gethpoa
+#     networks:
+#       - ifc_gringo
+#     # environment:
+#     #   - POA_SIGNER_PRI_KEY=${POA_SIGNER_PRI_KEY}
+#     #   - POA_SIGNER_ADDRESS=${POA_SIGNER_ADDRESS}
+#     #   - POA_SIGNER_PWD=${POA_SIGNER_PWD}
+#     #   - SIDECHAIN_ADDRESS=${SIDECHAIN_ADDRESS}
+#     #   - WEB3_HOST=${WEB3_HOST}
+#     #   - WEB3_PORT=${WEB3_PORT}
+#     #   - IFC_NODE_DB_TYPE=${IFC_NODE_DB_TYPE}
+#     #   - IFC_GRINGO_PORT=${IFC_GRINGO_PORT}
+#     entrypoint: devops/ifc-agent.start.sh
+
+#   postgres:
+#     build:
+#       context: ./Dockerfiles
+#       dockerfile: postgres
+#     image: postgres
+#     hostname: postgres  
+#     container_name: postgres
+#     restart: always
+#     volumes:
+#       - ${POSTGRES_PATH}:/var/lib/postgresql/data
+#     ports:
+#       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+#     environment:
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#     networks:
+#       - ifc_gringo
+
+    gethpoa:
+      build:
+        context: ./Dockerfiles
+        dockerfile: gethpoa
+      image: gethpoa
+      hostname: gethpoa
+      container_name: gethpoa
+      ports:
+        - "8545:8545"
+        # - "30303:30303"
+      volumes:
+        - ${GETH_HOST_DATA_VOL}:/gethdata
+      networks:
+        - ifc_gringo  
+      environment:
+        - POA_SIGNER_PRI_KEY=${POA_SIGNER_PRI_KEY}
+        - POA_SIGNER_ADDRESS=${POA_SIGNER_ADDRESS}
+        - POA_SIGNER_PWD=${POA_SIGNER_PWD}
+      # entrypoint: ./geth-full.start.sh
+
+networks:
+  ifc_gringo:

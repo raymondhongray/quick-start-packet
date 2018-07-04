@@ -1,0 +1,6 @@
+FROM postgres:alpine
+LABEL ken <ken.lin@infinitechain.io>
+
+CMD ["postgres"]
+
+EXPOSE 5432
