@@ -16,7 +16,7 @@ POA_SIGNER_PRIKEY_FILE=$GETH_DATA_DIR/poa_signer.raw_prikey
 POA_SIGNER_PWD_FILE=$GETH_DATA_DIR/poa_signer.pwd
 
 
-# $1 is gethpoa_genesis.json
+# $1 is gethpoa.genesis.json
 # $2 is $POA_SIGNER_ADDRESS
 # $3 is $BLOCK_GENERATING_TIME
 function _modGenesis {
@@ -51,15 +51,15 @@ function _isSignerModified {
 function _initGeth {
     rm -rfv $GETH_DATA_DIR/*
 
-    # Replace genesis file
-    cp gethpoa_genesis.json.tpl gethpoa_genesis.json
-    _modGenesis gethpoa_genesis.json $POA_SIGNER_ADDRESS $BLOCK_GENERATING_TIME
-    mv gethpoa_genesis.json $GETH_DATA_DIR/gethpoa_genesis.json
+    # Modify genesis file
+    cp gethpoa.genesis.json.tpl gethpoa.genesis.json
+    _modGenesis gethpoa.genesis.json $POA_SIGNER_ADDRESS $BLOCK_GENERATING_TIME
+    mv gethpoa.genesis.json $GETH_DATA_DIR/gethpoa.genesis.json
 
     # Run geth init
     geth \
     --datadir $GETH_DATA_DIR \
-    init $GETH_DATA_DIR/gethpoa_genesis.json
+    init $GETH_DATA_DIR/gethpoa.genesis.json
 
     echo $POA_SIGNER_PRI_KEY > $POA_SIGNER_PRIKEY_FILE
     echo $POA_SIGNER_PWD > $POA_SIGNER_PWD_FILE

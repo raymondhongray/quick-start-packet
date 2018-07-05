@@ -1,6 +1,9 @@
 FROM node:8.9
 LABEL ken <ken.lin@infinitechain.io>
 
+ARG CONTRACTS_VERSION
+ARG GRINGOTTS_VERSION  
+
 RUN apt-get update && \
     apt-get install python -y && \
     apt-get install build-essential -y && \
@@ -8,15 +11,35 @@ RUN apt-get update && \
     npm install -g truffle@4.1.7
 
 ENV APP_ROOT=/home/node/app \
-    GRINGOTSS_SPACE=$APP_ROOT/gringotss \
-    CONTRACTS_SPACE=$APP_ROOT/contracts
+    MOUNT_DATA_DIR=/gringotts_data
 
-RUN cd $APP_ROOT \
-    git clone git@github.com:BOLT-Protocol/contracts.git $CONTRACTS_SPACE
+ENV CONTRACTS_SPACE=$APP_ROOT/contracts
+ENV GRINGOTTS_SPACE=$APP_ROOT/gringotts
+    
+ENV GRIN_CONTRACTS_SPACE=$CONTRACTS_SPACE/gringotts
+    
+RUN mkdir -p $APP_ROOT \
+    mkdir -p $MOUNT_DATA_DIR \
+    mkdir -p $CONTRACTS_SPACE \
+    mkdir -p $GRINGOTTS_SPACE
 
-COPY . $GRINGOTSS_SPACE 
+RUN git clone https://github.com/BOLT-Protocol/contracts.git $CONTRACTS_SPACE && \
+    cd $CONTRACTS_SPACE && git checkout $CONTRACTS_VERSION && cd $GRIN_CONTRACTS_SPACE && npm install && \
+    git clone https://github.com/BOLT-Protocol/gringotts.git $GRINGOTTS_SPACE && \
+    cd $GRINGOTTS_SPACE && git checkout $GRINGOTTS_VERSION && npm install
 
-RUN npm install
-    truffle compile
-    npm run pgmigrate
-    pm2 start --log-date-format 'DD-MM HH:mm:ss.SSS' --no-daemon server.js
+COPY ./scripts/.env.default \
+     $APP_ROOT
+
+COPY ./template/contract.env.js.tpl \
+     $GRIN_CONTRACTS_SPACE
+
+COPY ./template/gringotts.env.js.tpl \
+     ./scripts/gringotts_entrypoint.sh \
+     $GRINGOTTS_SPACE/
+
+EXPOSE 3000
+
+RUN chmod +x $GRINGOTTS_SPACE/gringotts_entrypoint.sh   
+
+ENTRYPOINT $GRINGOTTS_SPACE/gringotts_entrypoint.sh

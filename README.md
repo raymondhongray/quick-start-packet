@@ -1,9 +1,10 @@
 ## How to use ##
 
-Copy .env.example into .env ,assign the value for variable in .env
+### Step 1 ###
+Copy .env.example into .env ,provide the value for variable in .env
 
 #### NOTE ####
-There two kind of variable in .env
+There are two kind of variable in .env
 
 For those which are ```required```, you ```must``` set the proper value.
 
@@ -23,3 +24,22 @@ POA_SIGNER_PWD=2wsx4rfv
 # The time to generate the block in seconds
 BLOCK_GENERATING_TIME=3
 ```
+
+### Step 2 ###
+Start all services.
+```
+docker-compose up -d
+```
+
+#### NOTE ####
+This command will start 3 service(3 docker container) which including:
+
+#### gethpoa ####
+A ```private``` ethereum geth node for developing and testing purpose.
+
+#### postgres ####
+A postgresql database which db name as ```gringot``` ,user as ```harry``` and password as ```potter```.
+This database is the storage for gringotts service. 
+
+#### gringotts ####
+Gringotts provide transaction processing and data storage. Furthermore, it is designed to build Indexed Merkle Trees and distribute receipts for security purposes of BOLT protocol.

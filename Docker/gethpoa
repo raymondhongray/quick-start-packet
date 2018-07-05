@@ -4,15 +4,18 @@ LABEL ken <ken.lin@infinitechain.io>
 ENV WORK_DIR=/geth \
     GETH_DATA_DIR=/gethdata
 
+RUN apk update && apk add bash
+
+# # https://askubuntu.com/questions/529563/shellshock-bash-already-updated
+# RUN apt-get update && apt-get install bash
+
 RUN mkdir -p $WORK_DIR
 
 WORKDIR $WORK_DIR
 
-RUN apk update && apk add bash
-
 COPY ./scripts/.env.default \
      ./scripts/gethpoa_entrypoint.sh \
-     ./template/gethpoa_genesis.json.tpl \
+     ./template/gethpoa.genesis.json.tpl \
      $WORK_DIR/      
 
 ENTRYPOINT $WORK_DIR/gethpoa_entrypoint.sh

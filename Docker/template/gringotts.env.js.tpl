@@ -1,16 +1,23 @@
 var argv = require('minimist')(process.argv.slice(2), { string: ['serverAddress', 'contractAddress'] });
 
 let env = {
-  web3Host: '<WEB3_HOST>',
-  web3Port: '<WEB3_PORT>',
+  //web3Host: '<WEB3_HOST>',
+  //web3Port: '<WEB3_PORT>',
+  web3Host: 'gethpoa',
+  web3Port: '8545',
   serverAddress: '<POA_SIGNER_ADDRESS>',
   contractAddress: '<SIDECHAIN_ADDRESS>',
-  boosterPort: '<IFC_GRINGO_PORT>',
+  //boosterPort: '<IFC_GRINGO_PORT>',
+  boosterPort: 3000,
   production: {
-    username: '<POSTGRES_USER>',
-    password: '<POSTGRES_PASSWORD>',
-    database: '<POSTGRES_DB>',
-    host: '<POSTGRES_HOST>',
+    //username: '<POSTGRES_USER>',
+    //password: '<POSTGRES_PASSWORD>',
+    //database: '<POSTGRES_DB>',
+    //host: '<POSTGRES_HOST>',
+    username: 'harry',
+    password: 'potter',
+    database: 'gringot',
+    host: 'postgres',
     dialect: 'postgres',
     logging: false
   }
