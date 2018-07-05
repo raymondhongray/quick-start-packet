@@ -9,6 +9,7 @@ source .env.default
 
 POA_SIGNER_ADDRESS_FILE=$MOUNT_DATA_DIR/poa_signer.address
 POA_SIGNER_PWD_FILE=$MOUNT_DATA_DIR/poa_signer.pwd
+SIDECHAIN_ADDRESS_FILE=$MOUNT_DATA_DIR/sidechain.address
 
 # echo 0 if not modified
 # echo 1 if modified
@@ -26,6 +27,17 @@ function _isSignerModified {
 
     echo 0
 }
+
+# function _isSideChainModified {
+#     [ ! -f "$SIDECHAIN_ADDRESS_FILE" ] && \
+#     echo 1 && return
+
+#     STORED_SIDECHAIN_ADDRESS=$(cat $SIDECHAIN_ADDRESS_FILE) && \
+#     [[ "$STORED_SIDECHAIN_ADDRESS" == "" ]] && \
+#     echo 1 && return
+
+#     echo 0
+# }
 
 # $1 is string to check
 function _cleanBadPattern {
@@ -50,7 +62,7 @@ function _modGringottsEnvJS {
 }
 
 # Modify env.js of contract
-function _updateContractsEnvJS {
+function _produceContractsEnvJS {
     cp contract.env.js.tpl contract.env.js
     _modContractEnvJS contract.env.js
     mv contract.env.js $GRIN_CONTRACTS_SPACE/env.js
@@ -58,7 +70,7 @@ function _updateContractsEnvJS {
 
 # Modify env.js of gringotts
 # $1 is $sideChainAddress
-function _updateGringottsEnvJS {
+function _produceGringottsEnvJS {
     cp gringotts.env.js.tpl gringotts.env.js
     _modGringottsEnvJS gringotts.env.js $1
     mv gringotts.env.js $GRINGOTTS_SPACE/env.js
@@ -84,24 +96,27 @@ function _deploy {
 
 function _provision {
     cd $GRIN_CONTRACTS_SPACE
-    _updateContractsEnvJS
-    _deploy sideChainAddressFile
-    sideChainAddress=$(cat sideChainAddressFile)
+    _produceContractsEnvJS
+    _deploy $SIDECHAIN_ADDRESS_FILE
+    sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
     [[ "$sideChainAddress" == "0x0000000000000000000000000000000000000000" ]] && \
     echo "Sidechain deployment failed" && exit 256
 
     cd $GRINGOTTS_SPACE
-    _updateGringottsEnvJS $sideChainAddress
+    _produceGringottsEnvJS $sideChainAddress
 
     echo $POA_SIGNER_ADDRESS > $POA_SIGNER_ADDRESS_FILE
     echo $POA_SIGNER_PWD > $POA_SIGNER_PWD_FILE
 }
 
-isModified=$(_isSignerModified);
-if [[ "$isModified" == "1" ]]; then 
+isSingerModified=$(_isSignerModified);
+if [[ "$isSingerModified" == "1" ]]; then 
     _provision
 else
     echo "signer address is unchanged, pass provision process."
+    sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
+    cd $GRINGOTTS_SPACE
+    _produceGringottsEnvJS $sideChainAddress
 fi
 
 cd $GRINGOTTS_SPACE

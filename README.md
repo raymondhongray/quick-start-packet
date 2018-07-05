@@ -1,16 +1,59 @@
-## How to use ##
+## Quick-Start-Packet ##
+This packet introduce a simple way to provide services for the BOLT SDK developing/testing.
+
+### Services ###
+The Services including ```gringotts``` , ```postgres``` and ```gethpoa```.
+
+#### gringotts ####
+[gringotts](https://github.com/BOLT-Protocol/gringotts) provide transaction processing and data storage. Furthermore, it is designed to build Indexed Merkle Trees and distribute receipts for security purposes of BOLT protocol. 
+
+This service expose port ```3000```. 
+
+#### postgres ####
+A postgresql database which db name as ```gringot``` ,user name as ```harry``` and password as ```potter```.  
+This database is the storage for gringotts service.   
+
+This service expose port ```5432```.
+
+#### gethpoa ####
+A ethereum geth node which using POA consensus to provide rapid generation rate of block.   
+This node is under ```private chain``` for developing and testing purpose.
+
+This service expose port ```8545```.
+
+## How To Use ##
 
 ### Step 1 ###
-Copy .env.example into .env ,provide the value for variable in .env
+Copy .env.example into .env ,then modify the variable which is ```required``` type in .env
 
-#### NOTE ####
-There are two kind of variable in .env
+### Step 2 ###
+Start all services.
+```
+docker-compose up -d
+```
 
-For those which are ```required```, you ```must``` set the proper value.
+### NOTE ###
+There are two type of variable in .env
 
-For those which are ```optional```, you could leave it as blank and system will use the default value automatically.
+For the ```required``` variable, you ```must``` provide the proper value.
 
-The default value for ```optional``` variable as following:
+For the ```optional``` variable, you could leave it as blank and system will use the default value automatically.
+
+No matter which type of variable , ```DO NOT``` use space between variable name and the equal symbol(```=```).   
+Also ```NOT``` use space between variable value and the equal symbol(```=```).
+
+```
+# Correct
+POA_SIGNER_PRI_KEY=1234
+
+# Incorrect
+POA_SIGNER_PRI_KEY =1234
+
+# Incorrect
+POA_SIGNER_PRI_KEY= 1234
+```
+
+The default value of ```optional``` variable:
 ```
 # The private key of geth poa signer
 POA_SIGNER_PRI_KEY=18c55c27f047f21ed3f42588c6ec0b2a50c77ceba223439ee9744bb86ed8fa5c
@@ -24,22 +67,3 @@ POA_SIGNER_PWD=2wsx4rfv
 # The time to generate the block in seconds
 BLOCK_GENERATING_TIME=3
 ```
-
-### Step 2 ###
-Start all services.
-```
-docker-compose up -d
-```
-
-#### NOTE ####
-This command will start 3 service(3 docker container) which including:
-
-#### gethpoa ####
-A ```private``` ethereum geth node for developing and testing purpose.
-
-#### postgres ####
-A postgresql database which db name as ```gringot``` ,user as ```harry``` and password as ```potter```.
-This database is the storage for gringotts service. 
-
-#### gringotts ####
-Gringotts provide transaction processing and data storage. Furthermore, it is designed to build Indexed Merkle Trees and distribute receipts for security purposes of BOLT protocol.
