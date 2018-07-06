@@ -38,11 +38,15 @@ function _isSignerModified {
     echo 1 && return
 
     STORED_POA_SIGNER_PRIKEY=$(cat $POA_SIGNER_PRIKEY_FILE) && \
-    [[ "$STORED_POA_SIGNER_PRIKEY" != "" ]] && [[ "$STORED_POA_SIGNER_PRIKEY" != "$POA_SIGNER_PRI_KEY" ]] && \
+    STORED_POA_SIGNER_PWD=$(cat $POA_SIGNER_PWD_FILE)
+
+    [ "$STORED_POA_SIGNER_PRIKEY" == "" -o "$STORED_POA_SIGNER_PWD" == "" ] && \
+    echo 1 && return
+
+    [ "$STORED_POA_SIGNER_PRIKEY" != "$POA_SIGNER_PRI_KEY" ] && \
     echo 1 && return
     
-    STORED_POA_SIGNER_PWD=$(cat $POA_SIGNER_PWD_FILE) && \
-    [[ "$STORED_POA_SIGNER_PWD" != "" ]] && [[ "$STORED_POA_SIGNER_PWD" != "$POA_SIGNER_PWD" ]] && \
+    [ "$STORED_POA_SIGNER_PWD" != "$POA_SIGNER_PWD" ] && \
     echo 1 && return
 
     echo 0

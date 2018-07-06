@@ -1,8 +1,9 @@
 ## Quick-Start-Packet ##
 This packet introduce a simple way to provide services for the BOLT SDK developing/testing.
+Support macOS X and ubuntu 16.04.
 
 ### Services ###
-The Services including ```gringotts``` , ```postgres``` and ```gethpoa```.
+The services include ```gringotts``` , ```postgres``` and ```gethpoa```.
 
 #### gringotts ####
 [gringotts](https://github.com/BOLT-Protocol/gringotts) provide transaction processing and data storage. Furthermore, it is designed to build Indexed Merkle Trees and distribute receipts for security purposes of BOLT protocol. 
@@ -37,7 +38,7 @@ There are two type of variable in .env
 
 For the ```required``` variable, you ```must``` provide the proper value.
 
-For the ```optional``` variable, you could leave it as blank and system will use the default value automatically.
+For the ```optional``` variable, you could leave it as blank and system will import the default setting automatically.
 
 No matter which type of variable , ```DO NOT``` use space between variable name and the equal symbol(```=```).   
 Also ```NOT``` use space between variable value and the equal symbol(```=```).

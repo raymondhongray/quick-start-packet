@@ -7,6 +7,7 @@ ARG GRINGOTTS_VERSION
 RUN apt-get update && \
     apt-get install python -y && \
     apt-get install build-essential -y && \
+    apt-get install postgresql-client -y && \
     npm install -g pm2 && \
     npm install -g truffle@4.1.7
 

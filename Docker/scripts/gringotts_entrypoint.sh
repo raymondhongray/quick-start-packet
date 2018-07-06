@@ -18,11 +18,15 @@ function _isSignerModified {
     echo 1 && return
 
     STORED_POA_SIGNER_ADDRESS=$(cat $POA_SIGNER_ADDRESS_FILE) && \
-    [[ "$STORED_POA_SIGNER_ADDRESS" != "" ]] && [[ "$STORED_POA_SIGNER_ADDRESS" != "$POA_SIGNER_ADDRESS" ]] && \
+    STORED_POA_SIGNER_PWD=$(cat $POA_SIGNER_PWD_FILE)
+
+    [ "$STORED_POA_SIGNER_ADDRESS" == "" -o "$STORED_POA_SIGNER_PWD" == "" ] && \
+    echo 1 && return
+
+    [ "$STORED_POA_SIGNER_ADDRESS" != "$POA_SIGNER_ADDRESS" ] && \
     echo 1 && return
     
-    STORED_POA_SIGNER_PWD=$(cat $POA_SIGNER_PWD_FILE) && \
-    [[ "$STORED_POA_SIGNER_PWD" != "" ]] && [[ "$STORED_POA_SIGNER_PWD" != "$POA_SIGNER_PWD" ]] && \
+    [ "$STORED_POA_SIGNER_PWD" != "$POA_SIGNER_PWD" ] && \
     echo 1 && return
 
     echo 0
@@ -57,7 +61,7 @@ function _modContractEnvJS {
 function _modGringottsEnvJS {
     # sed -i "s%<WEB3_HOST>%$WEB3_HOST%g" $1
     # sed -i "s%<WEB3_PORT>%$WEB3_PORT%g" $1
-    sed -i "s%<POA_SIGNER_ADDRESS>%$POA_SIGNER_ADDRESS$%g" $1
+    sed -i "s%<POA_SIGNER_ADDRESS>%$POA_SIGNER_ADDRESS%g" $1
     sed -i "s%<SIDECHAIN_ADDRESS>%$2%g" $1
 }
 
@@ -104,6 +108,12 @@ function _provision {
 
     cd $GRINGOTTS_SPACE
     _produceGringottsEnvJS $sideChainAddress
+
+    # Try to re-create old db after deploy new SideChain
+    # https://www.tutorialspoint.com/postgresql/postgresql_drop_database.htm
+    # https://dba.stackexchange.com/questions/14740/how-to-use-psql-with-no-password-prompt
+    PGPASSWORD=potter dropdb -h postgres -p 5432 -U harry gringot
+    #PGPASSWORD=potter createdb -h postgres -p 5432 -U harry gringot
 
     echo $POA_SIGNER_ADDRESS > $POA_SIGNER_ADDRESS_FILE
     echo $POA_SIGNER_PWD > $POA_SIGNER_PWD_FILE
