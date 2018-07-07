@@ -10,6 +10,7 @@ source .env.default
 POA_SIGNER_ADDRESS_FILE=$MOUNT_DATA_DIR/poa_signer.address
 POA_SIGNER_PWD_FILE=$MOUNT_DATA_DIR/poa_signer.pwd
 SIDECHAIN_ADDRESS_FILE=$MOUNT_DATA_DIR/sidechain.address
+TWX_ADDRESS_FILE=$MOUNT_DATA_DIR/twx.address
 
 # echo 0 if not modified
 # echo 1 if modified
@@ -96,6 +97,7 @@ function _deploy {
     cd $GRIN_CONTRACTS_SPACE
     local sideChainAddress=$(npm install > /dev/null 2>&1 && node testDeployBooster.js --managerAddress $ifcManagerAddress --boosterOwner $POA_SIGNER_ADDRESS --assetAddress $twxAddress --maxWithdraw 100) 
     echo $sideChainAddress > $1
+    echo $twxAddress > $TWX_ADDRESS_FILE
 }
 
 function _provision {
@@ -109,6 +111,10 @@ function _provision {
 
     cd $GRINGOTTS_SPACE
     _produceGringottsEnvJS $sideChainAddress
+    NODE_ENV=production ./node_modules/.bin/sequelize \
+    db:migrate:undo:all --config env.js \
+    --migrations-path ./storage-manager/migrations \
+    --models-path ./storage-manager/models
 
     # Try to re-create old db after deploy new SideChain
     # https://www.tutorialspoint.com/postgresql/postgresql_drop_database.htm
@@ -129,7 +135,7 @@ elif [ "$isSideChainModified" == "1" ]; then
     echo "sidechain address is changed, execute provision process."
     _provision    
 else
-    echo "signer address is unchanged, skip provision process."
+    echo "signer address | sidechain address is unchanged, skip provision process."
     sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
     cd $GRINGOTTS_SPACE
     _produceGringottsEnvJS $sideChainAddress

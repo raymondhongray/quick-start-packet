@@ -64,7 +64,6 @@ services:
       - POA_SIGNER_ADDRESS=${POA_SIGNER_ADDRESS}
       - POA_SIGNER_PWD=${POA_SIGNER_PWD}
       - BLOCK_GENERATING_TIME=${BLOCK_GENERATING_TIME}
-    # entrypoint: ./geth-full.start.sh
 
 networks:
   ifc_gringo:

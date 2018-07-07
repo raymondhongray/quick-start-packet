@@ -1,6 +1,6 @@
 FROM postgres:10.4
 LABEL ken <ken.lin@infinitechain.io>
 
-CMD ["postgres"]
-
 EXPOSE 5432
+
+CMD ["postgres"]

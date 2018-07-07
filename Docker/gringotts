@@ -4,10 +4,12 @@ LABEL ken <ken.lin@infinitechain.io>
 #ARG CONTRACTS_VERSION
 #ARG GRINGOTTS_VERSION  
 
-RUN apt-get update && \
-    apt-get install python -y && \
-    apt-get install build-essential -y && \
-    apt-get install postgresql-client -y && \
+RUN apt-get update && apt-get install -y \
+    python \
+    build-essential \
+    postgresql-client \
+    telnet \
+    vim && \
     npm install -g pm2 && \
     npm install -g truffle@4.1.7
 
@@ -24,10 +26,13 @@ RUN mkdir -p $APP_ROOT \
     mkdir -p $CONTRACTS_SPACE \
     mkdir -p $GRINGOTTS_SPACE
 
+ARG CONTRACTS_VERSION
+ARG GRINGOTTS_VERSION  
+
 RUN git clone https://github.com/BOLT-Protocol/contracts.git $CONTRACTS_SPACE && \
     cd $CONTRACTS_SPACE && git checkout 4d7a125357f181b3406275f03b9d7b8634b887b9 && cd $GRIN_CONTRACTS_SPACE && npm install && \
     git clone https://github.com/BOLT-Protocol/gringotts.git $GRINGOTTS_SPACE && \
-    cd $GRINGOTTS_SPACE && git checkout b5e2beb805b1cd67fd8a7683902cf7db3432ea27 && npm install
+    cd $GRINGOTTS_SPACE && git checkout c1b1fe8b7a004e65c3cd4aa060ce3c95debee0ef && npm install
 
 COPY ./scripts/.env.default \
      $APP_ROOT
@@ -42,5 +47,7 @@ COPY ./template/gringotts.env.js.tpl \
 EXPOSE 3000
 
 RUN chmod +x $GRINGOTTS_SPACE/gringotts_entrypoint.sh   
+#RUN ["chmod","+x","$GRINGOTTS_SPACE/gringotts_entrypoint.sh"]
 
 ENTRYPOINT $GRINGOTTS_SPACE/gringotts_entrypoint.sh
+#ENTRYPOINT ["$GRINGOTTS_SPACE/gringotts_entrypoint.sh"]
