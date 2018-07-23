@@ -64,7 +64,4 @@ POA_SIGNER_ADDRESS=0x50afb1b4c52c64daed49ab8c3aa82b0609b75db0
 
 # The password of geth poa signer
 POA_SIGNER_PWD=2wsx4rfv
-
-# The time to generate the block in seconds
-BLOCK_GENERATING_TIME=3
 ```

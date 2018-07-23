@@ -1,8 +1,8 @@
 FROM node:8.9
 LABEL ken <ken.lin@infinitechain.io>
 
-ARG CONTRACTS_VERSION
-ARG GRINGOTTS_VERSION  
+#ARG CONTRACTS_VERSION
+#ARG GRINGOTTS_VERSION  
 
 RUN apt-get update && \
     apt-get install python -y && \
@@ -25,9 +25,9 @@ RUN mkdir -p $APP_ROOT \
     mkdir -p $GRINGOTTS_SPACE
 
 RUN git clone https://github.com/BOLT-Protocol/contracts.git $CONTRACTS_SPACE && \
-    cd $CONTRACTS_SPACE && git checkout $CONTRACTS_VERSION && cd $GRIN_CONTRACTS_SPACE && npm install && \
+    cd $CONTRACTS_SPACE && git checkout 4d7a125357f181b3406275f03b9d7b8634b887b9 && cd $GRIN_CONTRACTS_SPACE && npm install && \
     git clone https://github.com/BOLT-Protocol/gringotts.git $GRINGOTTS_SPACE && \
-    cd $GRINGOTTS_SPACE && git checkout $GRINGOTTS_VERSION && npm install
+    cd $GRINGOTTS_SPACE && git checkout b5e2beb805b1cd67fd8a7683902cf7db3432ea27 && npm install
 
 COPY ./scripts/.env.default \
      $APP_ROOT

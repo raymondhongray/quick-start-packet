@@ -32,16 +32,16 @@ function _isSignerModified {
     echo 0
 }
 
-# function _isSideChainModified {
-#     [ ! -f "$SIDECHAIN_ADDRESS_FILE" ] && \
-#     echo 1 && return
+function _isSideChainModified {
+    [ ! -f "$SIDECHAIN_ADDRESS_FILE" ] && \
+    echo 1 && return
 
-#     STORED_SIDECHAIN_ADDRESS=$(cat $SIDECHAIN_ADDRESS_FILE) && \
-#     [[ "$STORED_SIDECHAIN_ADDRESS" == "" ]] && \
-#     echo 1 && return
+    STORED_SIDECHAIN_ADDRESS=$(cat $SIDECHAIN_ADDRESS_FILE) && \
+    [[ "$STORED_SIDECHAIN_ADDRESS" == "" ]] && \
+    echo 1 && return
 
-#     echo 0
-# }
+    echo 0
+}
 
 # $1 is string to check
 function _cleanBadPattern {
@@ -50,10 +50,7 @@ function _cleanBadPattern {
 
 # $1 is contract.env.js
 function _modContractEnvJS {
-    # sed -i "s%<WEB3_HOST>%$WEB3_HOST%g" $1
-    # sed -i "s%<WEB3_PORT>%$WEB3_PORT%g" $1
-    sed -i "s%<POA_SIGNER_ADDRESS>%$POA_SIGNER_ADDRESS%g" $1
-    sed -i "s%<POA_SIGNER_PWD>%$POA_SIGNER_PWD%g" $1
+    sed -i "s%<POA_SIGNER_PRI_KEY>%$POA_SIGNER_PRI_KEY%g" $1
 }
 
 # $1 is contract.env.js
@@ -90,17 +87,21 @@ function _deploy {
     truffle deploy --reset 2>/dev/stdout | tee $tmpDeployFile
     local ifcManagerAddress=$(cat $tmpDeployFile | grep InfinitechainManager: | sed "s%InfinitechainManager:%%g" | sed "s% %%g")
     local ifcManagerAddress=$(_cleanBadPattern $ifcManagerAddress)
+    local twxAddress=$(cat $tmpDeployFile | grep TWX: | sed "s%TWX:%%g" | sed "s% %%g")
+    local twxAddress=$(_cleanBadPattern $twxAddress)
+    
     rm $tmpDeployFile
 
     # Deploy SideChain
     cd $GRIN_CONTRACTS_SPACE
-    local sideChainAddress=$(npm install > /dev/null 2>&1 && node testDeploySidechain.js --managerAddress $ifcManagerAddress --sidechainOwner $POA_SIGNER_ADDRESS) 
+    local sideChainAddress=$(npm install > /dev/null 2>&1 && node testDeployBooster.js --managerAddress $ifcManagerAddress --boosterOwner $POA_SIGNER_ADDRESS --assetAddress $twxAddress --maxWithdraw 100) 
     echo $sideChainAddress > $1
 }
 
 function _provision {
     cd $GRIN_CONTRACTS_SPACE
     _produceContractsEnvJS
+    
     _deploy $SIDECHAIN_ADDRESS_FILE
     sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
     [[ "$sideChainAddress" == "0x0000000000000000000000000000000000000000" ]] && \
@@ -113,17 +114,22 @@ function _provision {
     # https://www.tutorialspoint.com/postgresql/postgresql_drop_database.htm
     # https://dba.stackexchange.com/questions/14740/how-to-use-psql-with-no-password-prompt
     PGPASSWORD=potter dropdb -h postgres -p 5432 -U harry gringot
-    #PGPASSWORD=potter createdb -h postgres -p 5432 -U harry gringot
+    PGPASSWORD=potter createdb -h postgres -p 5432 -U harry gringot
 
     echo $POA_SIGNER_ADDRESS > $POA_SIGNER_ADDRESS_FILE
     echo $POA_SIGNER_PWD > $POA_SIGNER_PWD_FILE
 }
 
 isSingerModified=$(_isSignerModified);
-if [[ "$isSingerModified" == "1" ]]; then 
+isSideChainModified=$(_isSideChainModified);
+if [ "$isSingerModified" == "1" ]; then
+    echo "signer address is changed, execute provision process."
     _provision
+elif [ "$isSideChainModified" == "1" ]; then
+    echo "sidechain address is changed, execute provision process."
+    _provision    
 else
-    echo "signer address is unchanged, pass provision process."
+    echo "signer address is unchanged, skip provision process."
     sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
     cd $GRINGOTTS_SPACE
     _produceGringottsEnvJS $sideChainAddress
