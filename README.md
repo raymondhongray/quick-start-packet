@@ -1,6 +1,6 @@
 ## Quick-Start-Packet ##
 This packet introduce a simple way to provide essential services for the BOLT SDK developing/testing.  
-Support macOS X and ubuntu 16.04.
+Support Mac OS X and ubuntu 16.04.
 
 ### Essential Services ###
 The services include ```gringotts``` , ```postgres``` and ```gethpoa```.  
@@ -10,10 +10,14 @@ Each service run as an individual docker container.
 [gringotts](https://github.com/BOLT-Protocol/gringotts) provide transaction processing and data storage.  
 Furthermore, it is designed to build Indexed Merkle Trees and distribute receipts for security purposes of BOLT protocol. 
 
+Once the gringotts service is up ,
+a built-in asset (```TWX```) will be deployed.  
+User may get the address of ```TWX``` by checking ```twx.address``` under gringotts volume (the ```GRINGOTTS_HOST_DATA_VOL``` inside ```.env```)
+
 This service expose port ```3000```. 
 
 #### postgres ####
-A postgresql database which as ```gringot``` db name ,```harry``` as user name and ```potter``` as password.  
+A postgresql database which ```gringot``` as db name ,```harry``` as user name and ```potter``` as password.  
 This service provide the data storage for gringotts service.   
 
 This service expose port ```5432```.
@@ -31,6 +35,12 @@ only two more step is required to build whole services.
 
 ### Step 1 ###
 Install docker and docker-compose on your machine.
+
+[Docker ToolBox for Mac OS](https://docs.docker.com/toolbox/toolbox_install_mac/)
+
+[Docker for Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
+and
+[Docker Compose for Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-16-04)
 
 ### Step 2 ###
 Clone this project.  
@@ -55,8 +65,8 @@ For the ```required``` variable, you ```must``` provide the proper value.
 
 For the ```optional``` variable, you could leave it as blank and system will import the default setting automatically.
 
-No matter which type of variable , ```DO NOT``` use space between variable name and the equal symbol(```=```).   
-Also ```NOT``` use space between variable value and the equal symbol(```=```).
+No matter which type of variable ,variable name ```DO NOT``` followd by space and the equal symbol(```=```).   
+also ```NOT``` followed by variable value.
 
 ```
 # Correct
