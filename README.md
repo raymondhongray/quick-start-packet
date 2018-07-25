@@ -12,7 +12,7 @@ Furthermore, it is designed to build Indexed Merkle Trees and distribute receipt
 
 Once the gringotts service is up ,
 a built-in asset (```TWX```) will be deployed.  
-User may get the address of ```TWX``` by checking ```twx.address``` under gringotts volume (the ```GRINGOTTS_HOST_DATA_VOL``` inside ```.env```)
+User may get the address of ```TWX``` by checking ```twx.address``` under gringotts volume (```GRINGOTTS_HOST_DATA_VOL``` inside ```.env```)
 
 This service expose port ```3000```. 
 

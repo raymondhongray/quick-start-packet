@@ -21,12 +21,13 @@ cd $APP_ROOT
 source .env.default
 # [[ "$WEB3_HOST" == "" ]] && WEB3_HOST=$DEFAULT_WEB3_HOST
 # [[ "$WEB3_PORT" == "" ]] && WEB3_PORT=$DEFAULT_WEB3_PORT
+[[ "$POA_SIGNER_PRI_KEY" == "" ]] && POA_SIGNER_PRI_KEY=$DEFAULT_POA_SIGNER_PRI_KEY
 [[ "$POA_SIGNER_ADDRESS" == "" ]] && POA_SIGNER_ADDRESS=$DEFAULT_POA_SIGNER_ADDRESS
 [[ "$POA_SIGNER_PWD" == "" ]] && POA_SIGNER_PWD=$DEFAULT_POA_SIGNER_PWD
 
 POA_SIGNER_ADDRESS_FILE=$MOUNT_DATA_DIR/poa_signer.address
 POA_SIGNER_PWD_FILE=$MOUNT_DATA_DIR/poa_signer.pwd
-SIDECHAIN_ADDRESS_FILE=$MOUNT_DATA_DIR/sidechain.address
+BOOSTER_ADDRESS_FILE=$MOUNT_DATA_DIR/booster.address
 TWX_ADDRESS_FILE=$MOUNT_DATA_DIR/twx.address
 
 # echo 0 if not modified
@@ -50,12 +51,12 @@ function _isSignerModified {
     echo 0
 }
 
-function _isSideChainModified {
-    [ ! -f "$SIDECHAIN_ADDRESS_FILE" ] && \
+function _isBoosterModified {
+    [ ! -f "$BOOSTER_ADDRESS_FILE" ] && \
     echo 1 && return
 
-    STORED_SIDECHAIN_ADDRESS=$(cat $SIDECHAIN_ADDRESS_FILE) && \
-    [[ "$STORED_SIDECHAIN_ADDRESS" == "" ]] && \
+    STORED_BOOSTER_ADDRESS=$(cat $BOOSTER_ADDRESS_FILE) && \
+    [[ "$STORED_BOOSTER_ADDRESS" == "" ]] && \
     echo 1 && return
 
     echo 0
@@ -72,12 +73,12 @@ function _modContractEnvJS {
 }
 
 # $1 is contract.env.js
-# $2 is $sideChainAddress
+# $2 is $boosterAddress
 function _modGringottsEnvJS {
     # sed -i "s%<WEB3_HOST>%$WEB3_HOST%g" $1
     # sed -i "s%<WEB3_PORT>%$WEB3_PORT%g" $1
     sed -i "s%<POA_SIGNER_ADDRESS>%$POA_SIGNER_ADDRESS%g" $1
-    sed -i "s%<SIDECHAIN_ADDRESS>%$2%g" $1
+    sed -i "s%<BOOSTER_ADDRESS>%$2%g" $1
 }
 
 # Modify env.js of contract
@@ -88,7 +89,7 @@ function _produceContractsEnvJS {
 }
 
 # Modify env.js of gringotts
-# $1 is $sideChainAddress
+# $1 is $boosterAddress
 function _produceGringottsEnvJS {
     cp gringotts.env.js.tpl gringotts.env.js
     _modGringottsEnvJS gringotts.env.js $1
@@ -112,8 +113,8 @@ function _deploy {
 
     # Deploy SideChain
     cd $GRIN_CONTRACTS_SPACE
-    local sideChainAddress=$(npm install > /dev/null 2>&1 && node testDeployBooster.js --managerAddress $ifcManagerAddress --boosterOwner $POA_SIGNER_ADDRESS --assetAddress $twxAddress --maxWithdraw 100) 
-    echo $sideChainAddress > $1
+    local boosterAddress=$(npm install > /dev/null 2>&1 && node testDeployBooster.js --managerAddress $ifcManagerAddress --boosterOwner $POA_SIGNER_ADDRESS --assetAddress $twxAddress --maxWithdraw 100) 
+    echo $boosterAddress > $1
     echo $twxAddress > $TWX_ADDRESS_FILE
 }
 
@@ -121,13 +122,13 @@ function _provision {
     cd $GRIN_CONTRACTS_SPACE
     _produceContractsEnvJS
     
-    _deploy $SIDECHAIN_ADDRESS_FILE
-    sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
-    [[ "$sideChainAddress" == "0x0000000000000000000000000000000000000000" ]] && \
+    _deploy $BOOSTER_ADDRESS_FILE
+    boosterAddress=$(cat $BOOSTER_ADDRESS_FILE)
+    [[ "$boosterAddress" == "0x0000000000000000000000000000000000000000" ]] && \
     echo "Sidechain deployment failed" && exit 256
 
     cd $GRINGOTTS_SPACE
-    _produceGringottsEnvJS $sideChainAddress
+    _produceGringottsEnvJS $boosterAddress
     NODE_ENV=production ./node_modules/.bin/sequelize \
     db:migrate:undo:all --config env.js \
     --migrations-path ./storage-manager/migrations \
@@ -144,7 +145,7 @@ function _provision {
 }
 
 isSingerModified=$(_isSignerModified);
-isSideChainModified=$(_isSideChainModified);
+isBoosterModified=$(_isBoosterModified);
 if [ "$isSingerModified" == "1" ]; then
     echo -e -n "$BLUE"
     echo ""
@@ -152,10 +153,10 @@ if [ "$isSingerModified" == "1" ]; then
     echo ""
     echo -e -n "$NORMAL"
     _provision
-elif [ "$isSideChainModified" == "1" ]; then
+elif [ "$isBoosterModified" == "1" ]; then
     echo -e -n "$BLUE"
     echo ""
-    echo "Changes detected(sidechain address), execute provision process."
+    echo "Changes detected(booster address), execute provision process."
     echo ""
     echo -e -n "$NORMAL"
     _provision    
@@ -165,9 +166,9 @@ else
     echo "No changes detected, skip provision process."
     echo ""
     echo -e -n "$NORMAL"
-    sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
+    boosterAddress=$(cat $BOOSTER_ADDRESS_FILE)
     cd $GRINGOTTS_SPACE
-    _produceGringottsEnvJS $sideChainAddress
+    _produceGringottsEnvJS $boosterAddress
 fi
 
 cd $GRINGOTTS_SPACE

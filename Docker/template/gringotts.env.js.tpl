@@ -6,7 +6,7 @@ let env = {
   web3Host: 'gethpoa',
   web3Port: '8545',
   serverAddress: '<POA_SIGNER_ADDRESS>',
-  contractAddress: '<SIDECHAIN_ADDRESS>',
+  contractAddress: '<BOOSTER_ADDRESS>',
   //boosterPort: '<IFC_GRINGO_PORT>',
   boosterPort: 3000,
   production: {
