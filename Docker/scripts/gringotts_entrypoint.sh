@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# Output colors
+NORMAL="\\033[0;39m"
+RED="\\033[1;31m"
+BLUE="\\033[1;34m"
+
+CUR_DIR=$(pwd)
+
+function finally {
+    echo "switch to original workspace"
+    echo -e -n "$NORMAL"
+    cd $CUR_DIR
+    exit 1
+}
+
+trap finally ERR SIGINT SIGTERM SIGKILL SIGQUIT
+
+
 cd $APP_ROOT
 source .env.default
 # [[ "$WEB3_HOST" == "" ]] && WEB3_HOST=$DEFAULT_WEB3_HOST
@@ -129,13 +146,25 @@ function _provision {
 isSingerModified=$(_isSignerModified);
 isSideChainModified=$(_isSideChainModified);
 if [ "$isSingerModified" == "1" ]; then
-    echo "signer address is changed, execute provision process."
+    echo -e -n "$BLUE"
+    echo ""
+    echo "Changes detected(signer address), execute provision process."
+    echo ""
+    echo -e -n "$NORMAL"
     _provision
 elif [ "$isSideChainModified" == "1" ]; then
-    echo "sidechain address is changed, execute provision process."
+    echo -e -n "$BLUE"
+    echo ""
+    echo "Changes detected(sidechain address), execute provision process."
+    echo ""
+    echo -e -n "$NORMAL"
     _provision    
 else
-    echo "signer address | sidechain address is unchanged, skip provision process."
+    echo -e -n "$BLUE"
+    echo ""
+    echo "No changes detected, skip provision process."
+    echo ""
+    echo -e -n "$NORMAL"
     sideChainAddress=$(cat $SIDECHAIN_ADDRESS_FILE)
     cd $GRINGOTTS_SPACE
     _produceGringottsEnvJS $sideChainAddress

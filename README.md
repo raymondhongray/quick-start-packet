@@ -58,6 +58,15 @@ Start all services.
 docker-compose up -d
 ```
 
+User could observe the process by using docker-compose
+```
+docker-compose logs -f
+```
+or using docker
+```
+docker logs -f container-name
+```
+
 ### NOTE ###
 There are two type of variable in .env
 
@@ -65,8 +74,7 @@ For the ```required``` variable, you ```must``` provide the proper value.
 
 For the ```optional``` variable, you could leave it as blank and system will import the default setting automatically.
 
-No matter which type of variable ,variable name ```DO NOT``` followd by space and the equal symbol(```=```).   
-also ```NOT``` followed by variable value.
+While define the variable ,variable name ```SHOULD NOT``` followd by space and the equal symbol(```=```) also ```NOT``` followed by space.
 
 ```
 # Correct
