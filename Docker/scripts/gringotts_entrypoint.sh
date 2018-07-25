@@ -171,6 +171,14 @@ else
     _produceGringottsEnvJS $boosterAddress
 fi
 
+echo -e -n "$BLUE"
+echo ""
+echo "signer private key: "$POA_SIGNER_PRI_KEY
+echo "signer address    : "$POA_SIGNER_ADDRESS
+echo "signer password   : "$POA_SIGNER_PWD
+echo ""
+echo -e -n "$NORMAL"
+
 cd $GRINGOTTS_SPACE
 npm run pgmigrate
 pm2 start --log-date-format 'DD-MM HH:mm:ss.SSS' --no-daemon server.js
