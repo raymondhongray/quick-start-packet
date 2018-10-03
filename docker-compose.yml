@@ -5,9 +5,9 @@ services:
     build:
       context: ./Docker
       dockerfile: gringotts
-      # args:
-      #   GRINGOTTS_VERSION: 
-      #   CONTRACTS_VERSION: 
+      args:
+        GRINGOTTS_VERSION: ${GRINGOTTS_VERSION}
+        CONTRACTS_VERSION: ${CONTRACTS_VERSION}
     image: gringotts
     hostname: gringotts  
     container_name: gringotts
@@ -54,6 +54,7 @@ services:
     container_name: gethpoa
     ports:
       - "8545:8545"
+      - "8546:8546"
       # - "30303:30303"
     volumes:
       - ${GETH_HOST_DATA_VOL}:/gethdata
@@ -66,3 +67,8 @@ services:
 
 networks:
   ifc_gringo:
+
+volumes:
+  GETH_HOST_DATA_VOL:
+  POSTGRES_HOST_DATA_VOL:
+  GRINGOTTS_HOST_DATA_VOL:

@@ -87,7 +87,9 @@ geth \
 --maxpeers 25 --cache=2048 \
 --rpc --rpccorsdomain "*" --rpcaddr 0.0.0.0 \
 --rpcapi "db,eth,net,web3,personal" \
---port 30303 --rpcport 8545 \
+--ws --wsaddr 0.0.0.0 --wsorigins '*' \
+--wsapi personal,admin,db,eth,net,web3,miner,shh,txpool,debug \
+--port 30303 --rpcport 8545 --wsport 8546 \
 --datadir $GETH_DATA_DIR \
 --unlock "$POA_SIGNER_ADDRESS" \
 --etherbase "$POA_SIGNER_ADDRESS" \

@@ -112,14 +112,14 @@ function _deploy {
     rm $tmpDeployFile
 
     # Deploy SideChain
-    cd $GRIN_CONTRACTS_SPACE
+    cd $CONTRACTS_SPACE
     local boosterAddress=$(npm install > /dev/null 2>&1 && node testDeployBooster.js --managerAddress $ifcManagerAddress --boosterOwner $POA_SIGNER_ADDRESS --assetAddress $twxAddress --maxWithdraw 100) 
     echo $boosterAddress > $1
     echo $twxAddress > $TWX_ADDRESS_FILE
 }
 
 function _provision {
-    cd $GRIN_CONTRACTS_SPACE
+    cd $CONTRACTS_SPACE
     _produceContractsEnvJS
     
     _deploy $BOOSTER_ADDRESS_FILE
