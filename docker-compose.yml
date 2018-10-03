@@ -1,6 +1,27 @@
 version: "3.0"
 
 services:
+  testserver:
+    build:
+      context: ./Docker
+      dockerfile: testserver
+      args:
+        TESTSERVER_VERSION: ${TESTSERVER_VERSION}
+    image: testserver
+    hostname: testserver
+    container_name: testserver
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - gringotts
+    networks:
+      - ifc_public
+    environment:
+      - POA_SIGNER_PRI_KEY=${POA_SIGNER_PRI_KEY}
+      - POA_SIGNER_ADDRESS=${POA_SIGNER_ADDRESS}
+      - POA_SIGNER_PWD=${POA_SIGNER_PWD}
+
   gringotts:
     build:
       context: ./Docker
@@ -21,6 +42,7 @@ services:
       - gethpoa
     networks:
       - ifc_gringo
+      - ifc_public
     environment:
       - POA_SIGNER_PRI_KEY=${POA_SIGNER_PRI_KEY}
       - POA_SIGNER_ADDRESS=${POA_SIGNER_ADDRESS}
@@ -67,6 +89,7 @@ services:
 
 networks:
   ifc_gringo:
+  ifc_public:
 
 volumes:
   GETH_HOST_DATA_VOL:

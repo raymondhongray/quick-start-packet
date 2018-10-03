@@ -85,7 +85,7 @@ function _modGringottsEnvJS {
 function _produceContractsEnvJS {
     cp contract.env.js.tpl contract.env.js
     _modContractEnvJS contract.env.js
-    mv contract.env.js $GRIN_CONTRACTS_SPACE/env.js
+    mv contract.env.js $CONTRACTS_SPACE/env.js
 }
 
 # Modify env.js of gringotts
@@ -100,7 +100,7 @@ function _produceGringottsEnvJS {
 # $1 is the file to store SideChainAddress
 function _deploy {
     # Deploy InfinitechainManager
-    cd $GRIN_CONTRACTS_SPACE
+    cd $CONTRACTS_SPACE
     truffle compile > /dev/null 2>&1
     tmpDeployFile=truffle-deploy.tmp
     truffle deploy --reset 2>/dev/stdout | tee $tmpDeployFile

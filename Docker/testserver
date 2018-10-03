@@ -1,0 +1,37 @@
+FROM node:8.9
+LABEL maintainer="Luphia (luphia.chang@tideisun.com)"
+EXPOSE 3001
+
+ARG TESTSERVER_VERSION
+
+RUN apt-get update && \
+    apt-get install -y python build-essential telnet vim && \
+    npm install -g pm2
+
+ENV APP_ROOT=/home/node/app
+ENV SERVER_SPACE=$APP_ROOT/wizard_nodejs_demo
+ENV GRINGOTTS_URL=http://gringotts:3000
+ENV GETHPOA_WS=ws://gethpoa:8546
+
+RUN mkdir -p $APP_ROOT \
+    mkdir -p $SERVER_SPACE
+
+RUN git clone https://github.com/BOLT-Protocol/wizard_nodejs_demo $SERVER_SPACE && \
+    cd $SERVER_SPACE && git checkout $TESTSERVER_VERSION && npm install && \
+    cp env.js.example env.js
+
+WORKDIR $SERVER_SPACE
+
+CMD sed -i "s%YOUR_NODE%$GRINGOTTS_URL%g" env.js && \
+    sed -i "s%YOUR_WEB3%$GETHPOA_WS%g" env.js && \
+    sed -i "s%YOUR_PRIVATE_KEY%$POA_SIGNER_PRI_KEY%g" env.js && \
+    npm install && \
+    sleep 1m && \
+    pm2 start server.js && \
+    sleep 5s && \
+    node testProposeDeposit.js && \
+    node testRemittance.js && \
+    node testProposeWithdrawal.js && \
+    node testInstantWithdraw.js && \
+    node testAuditor.js && \
+    pm2 logs 0
