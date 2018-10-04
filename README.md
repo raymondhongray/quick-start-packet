@@ -115,7 +115,7 @@ POA_SIGNER_PWD=123qwe456RTY
 git clone https://github.com/BOLT-Protocol/quick-start-packet
 
 # 切換至合適的版本
-cd quick-start-packet && git checkout v1.0.1
+cd quick-start-packet && git checkout v1.0.2
 
 # 設定參數
 cp .env.example .env && vi .env
