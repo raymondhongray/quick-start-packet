@@ -28,10 +28,15 @@ CMD sed -i "s%YOUR_NODE%$GRINGOTTS_URL%g" env.js && \
     npm install && \
     sleep 1m && \
     pm2 start server.js && \
-    sleep 5s && \
-    node testProposeDeposit.js && \
-    node testRemittance.js && \
-    node testProposeWithdrawal.js && \
-    node testInstantWithdraw.js && \
-    node testAuditor.js && \
-    pm2 logs 0
+    sleep 1m && \
+    pm2 start testProposeDeposit.js && \
+    sleep 20s && \
+    pm2 start testRemittance.js && \
+    sleep 20s && \
+    pm2 start testProposeWithdrawal.js && \
+    sleep 20s && \
+    pm2 start testInstantWithdraw.js && \
+    sleep 20s && \
+    pm2 start testAuditor.js && \
+    sleep 20s && \
+    pm2 logs

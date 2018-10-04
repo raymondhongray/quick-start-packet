@@ -16,6 +16,7 @@ services:
     depends_on:
       - gringotts
     networks:
+      - ifc_gringo
       - ifc_public
     environment:
       - POA_SIGNER_PRI_KEY=${POA_SIGNER_PRI_KEY}

@@ -16,7 +16,7 @@ WORKDIR $WORK_DIR
 COPY ./scripts/.env.default \
      ./scripts/gethpoa_entrypoint.sh \
      ./template/gethpoa.genesis.json.tpl \
-     $WORK_DIR/      
+     $WORK_DIR/
 
 ENTRYPOINT $WORK_DIR/gethpoa_entrypoint.sh
 #ENTRYPOINT ["$WORK_DIR/gethpoa_entrypoint.sh"]
