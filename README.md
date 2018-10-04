@@ -1,6 +1,13 @@
-## Quick-Start-Packet ##
+## Quick-Start-Packet v1.0.2 ##
 This packet introduce a simple way to provide essential services for the BOLT SDK developing/testing.  
 Support Mac OS X and ubuntu 16.04.
+
+### VERSION ###
+- gringotts v0.2.1
+- contracts v1.1.1
+- truffle 4.1.7
+- wizard_nodejs v1.2.1
+- wizard_nodejs_demo v0.2.1
 
 ### Essential Services ###
 The services include ```gringotts``` , ```postgres``` and ```gethpoa```.  
