@@ -105,3 +105,49 @@ POA_SIGNER_ADDRESS=0x9644fb7d0108a6B7e52cab5171298969a427CaCD
 # The password of geth poa signer
 POA_SIGNER_PWD=123qwe456RTY
 ```
+
+
+## Step by Step build up Payment Boost
+```shell
+# 安裝 Docker
+
+# 下載專案
+git clone https://github.com/BOLT-Protocol/quick-start-packet
+
+# 切換至合適的版本
+cd quick-start-packet && git checkout v1.0.1
+
+# 設定參數
+cp .env.example .env && vi .env
+
+# 部署服務
+docker-compose up --build -d && docker-compose logs -f
+
+# 與 gethpoa docker 互動
+docker exec -it gethpoa /bin/bash
+
+## http://gethpoa:8545
+## ws://gethpoa:8546
+##
+## Miner keystore
+## /gethdata/keystore/UTC--... 
+##
+## Miner keystore password
+## /gethdata/poa_signer.pwd
+##
+## Miner Private Key
+## /gethdata/poa_signer.raw_prikey
+
+# 與 gringotts docker 互動
+docker exec -it gringotts /bin/bash
+
+## http://gringotts:3000
+
+# 與 testserver docker 互動
+docker exec -it testserver /bin/bash
+
+## http://gringotts:3001
+
+# 把服務砍光
+docker-compose down --volume
+```
